@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Amrutha's Ice‑Cream Time — Book a Slot</title>
+  <style>
+    /* ---------- Theme & variables ---------- */
+    :root{
+      --bg:#FFF8F6;
+      --card:#fff;
+      --text:#1b1b1f;
+      --muted:#6b6b72;
+      --accent:#FF7AA2; /* strawberry */
+      --accent-2:#FFDDAA; /* cream */
+      --glass: rgba(255,255,255,0.6);
+      --shadow: 0 8px 30px rgba(11,14,25,0.08);
+      --radius:16px;
+      --teddy-fill:#F6D6C8;
+    }
+
+    /* dark defaults (used when data-theme='dark' or body.classList contains 'dark') */
+    body[data-theme='dark'], body.dark{ --bg:#071426; --card:#081425; --text:#E6EEF5; --muted:#9fb0c1; --glass: rgba(255,255,255,0.03); --shadow: 0 8px 30px rgba(2,6,23,0.6); }
+
+    /* variants */
+    body[data-variant='strawberry']{ --accent:#FF7AA2; --accent-2:#FFDDAA; --teddy-fill:#F6D6C8; }
+    body[data-variant='chocolate']{ --accent:#6B3E2B; --accent-2:#BFEDE0; --teddy-fill:#E7C9A9; }
+    body[data-variant='rainbow']{ --accent:#7AD7FF; --accent-2:#FFB6E3; --teddy-fill:#FCE7A9; }
+
+    /* ---------- Base ---------- */
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;background:var(--bg);color:var(--text);transition:background .35s,color .35s}
+    a{color:inherit}
+
+    .wrap{max-width:1100px;margin:20px auto;padding:18px}
+
+    /* Header */
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px}
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.04);}
+    .brand h1{margin:0;font-size:20px}
+    .brand p{margin:0;font-size:13px;color:var(--muted)}
+
+    .controls{display:flex;gap:10px;align-items:center}
+    .control{background:var(--card);padding:8px;border-radius:12px;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+    .small{font-size:13px;color:var(--muted)}
+    .btn{padding:8px 12px;border-radius:10px;border:0;background:transparent;cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#062018;font-weight:700}
+
+    /* layout */
+    main{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px}
+    @media (max-width:980px){ main{grid-template-columns:1fr} }
+
+    .panel{background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:var(--shadow)}
+
+    /* pickers & slots */
+    .pickers{display:flex;gap:10px;flex-wrap:wrap}
+    input[type=date], select, input[type=text]{padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);background:var(--glass);color:inherit}
+    .slots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:12px}
+    .slot{padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));cursor:pointer;border:1px solid rgba(0,0,0,0.04);transition:transform .15s,box-shadow .15s}
+    .slot:hover{transform:translateY(-6px);box-shadow:0 10px 26px rgba(2,6,23,0.08)}
+    .slot.booked{opacity:.55;cursor:not-allowed;border-style:dashed}
+    .time{font-weight:700}
+    .meta{font-size:13px;color:var(--muted)}
+
+    /* booking aside */
+    .book-panel{position:sticky;top:20px}
+    .book-panel h3{margin:0 0 8px}
+    .field{display:block;margin:8px 0}
+    .note{font-size:13px;color:var(--muted)}
+
+    footer{margin-top:18px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+
+    .pill{display:inline-block;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.04);font-weight:700}
+
+    /* cute teddy (decor) */
+    .teddy-wrap{position:fixed;right:18px;bottom:18px;width:160px;height:160px;pointer-events:none;z-index:20}
+    .teddy{width:100%;height:100%;}
+    .teddy .float{animation:float 4s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .teddy .sway{animation:sway 3.5s ease-in-out infinite}
+    @keyframes sway{0%{transform:rotate(0)}50%{transform:rotate(6deg)}100%{transform:rotate(0deg)}}
+    .icecream-spin{animation:spin 6s linear infinite;transform-origin:50% 50%}
+    @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+    /* small responsiveness */
+    @media (max-width:480px){ .controls{flex-direction:column;align-items:flex-end} .brand h1{font-size:18px} }
+
+  </style>
+</head>
+<body data-variant="strawberry">
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" title="Ammu's Ice-Cream Time">
+          <!-- tiny teddy in logo -->
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="44" height="44" aria-hidden="true">
+            <g transform="translate(6,6)">
+              <circle cx="16" cy="14" r="10" fill="var(--teddy-fill)" stroke="rgba(0,0,0,0.06)"/>
+              <circle cx="34" cy="14" r="10" fill="var(--teddy-fill)" stroke="rgba(0,0,0,0.06)"/>
+              <circle cx="24" cy="26" r="10" fill="#fff" opacity="0.06"/>
+              <rect x="20" y="28" width="8" height="12" rx="2" fill="var(--accent)"/>
+            </g>
+          </svg>
+        </div>
+        <div>
+          <h1>Ammu's Ice‑Cream Time</h1>
+          <p>Pick a day & sweet time — teddy-approved 🍨</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="control small">
+          <label style="display:flex;gap:8px;align-items:center"><input id="autoTheme" type="checkbox" checked/> Auto theme</label>
+        </div>
+        <div class="control">
+          <label class="small">Variant
+            <select id="variantSelect" style="margin-left:8px">
+              <option value="strawberry">Strawberry Vanilla</option>
+              <option value="chocolate">Chocolate Mint</option>
+              <option value="rainbow">Rainbow Scoops</option>
+            </select>
+          </label>
+        </div>
+        <div class="control" style="display:flex;gap:6px;align-items:center">
+          <button id="lightBtn" class="btn">☀️ Light</button>
+          <button id="darkBtn" class="btn">🌙 Dark</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="pickers">
+          <label class="small">Pick a date <input id="dateInput" type="date" /></label>
+          <label class="small">Duration <select id="durationSelect"><option value="30">30 min</option><option value="60">60 min</option><option value="90">90 min</option></select></label>
+          <button id="loadSlotsBtn" class="btn primary">Show slots</button>
+        </div>
+
+        <h3 style="margin-top:12px">Available slots</h3>
+        <div id="slotsGrid" class="slots-grid" aria-live="polite"></div>
+        <div id="noSlots" class="note">Pick a date and press "Show slots".</div>
+      </section>
+
+      <aside class="panel book-panel">
+        <h3>Book this slot</h3>
+        <div id="chosenInfo" class="note">No slot selected.</div>
+        <form id="bookForm">
+          <label class="field">Your name <input id="nameInput" type="text" placeholder="Your name" required></label>
+          <label class="field">Note <input id="noteInput" type="text" placeholder="Where shall we meet? (optional)"></label>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button type="submit" class="btn primary">Confirm booking</button>
+            <button type="button" id="cancelBtn" class="btn">Cancel</button>
+          </div>
+        </form>
+        <div id="existingBooking" class="note" style="margin-top:12px"></div>
+
+        <hr style="margin:14px 0;border:none;border-top:1px solid rgba(0,0,0,0.04)">
+        <div class="small">Saved locally (localStorage). Use "Clear" to reset.</div>
+        <div style="margin-top:8px">
+          <button id="clearAll" class="btn">Clear</button>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <div class="small">Made with ☕ + cuddles • All times shown in your browser timezone</div>
+      <div class="small">Tip: Auto theme follows your device. Manual buttons override it.</div>
+    </footer>
+
+    <!-- animated teddy (decor) -->
+    <div class="teddy-wrap" aria-hidden="true">
+      <svg class="teddy" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <g class="float" transform="translate(8,8)">
+          <g class="sway" transform="translate(20,14)">
+            <circle cx="36" cy="30" r="18" fill="var(--teddy-fill)" stroke="rgba(0,0,0,0.06)"/>
+            <circle cx="76" cy="30" r="18" fill="var(--teddy-fill)" stroke="rgba(0,0,0,0.06)"/>
+            <circle cx="56" cy="64" r="28" fill="var(--teddy-fill)" stroke="rgba(0,0,0,0.06)"/>
+
+            <!-- eyes/mouth -->
+            <circle cx="52" cy="56" r="3" fill="#3b2b2b" />
+            <circle cx="60" cy="56" r="3" fill="#3b2b2b" />
+            <path d="M52 72 Q60 78 68 72" stroke="#3b2b2b" stroke-width="2" fill="none" stroke-linecap="round" />
+
+            <!-- holding ice cream -->
+            <g transform="translate(86,34) rotate(18)">
+              <path d="M6 2 C12 0 18 6 18 12 C18 18 12 24 6 24 C0 24 -6 18 -6 12 C-6 6 0 2 6 2Z" fill="var(--accent)" class="icecream-spin"/>
+              <rect x="-4" y="26" width="20" height="26" rx="4" fill="sienna" opacity="0.9"/>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+  </div>
+
+  <template id="slotTemplate"><button class="slot"><div class="time"></div><div class="meta"></div></button></template>
+
+  <script>
+  (function(){
+    // configuration
+    const OPEN_HOUR = 9;
+    const CLOSE_HOUR = 21;
+    const STEP_MIN = 30;
+    const STORAGE_KEY = 'amrutha_icecream_bookings_v1';
+
+    // DOM refs
+    const dateInput = document.getElementById('dateInput');
+    const loadBtn = document.getElementById('loadSlotsBtn');
+    const durationSelect = document.getElementById('durationSelect');
+    const slotsGrid = document.getElementById('slotsGrid');
+    const slotTemplate = document.getElementById('slotTemplate');
+    const noSlots = document.getElementById('noSlots');
+    const chosenInfo = document.getElementById('chosenInfo');
+    const bookForm = document.getElementById('bookForm');
+    const nameInput = document.getElementById('nameInput');
+    const noteInput = document.getElementById('noteInput');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const existingBooking = document.getElementById('existingBooking');
+    const clearAll = document.getElementById('clearAll');
+
+    const variantSelect = document.getElementById('variantSelect');
+    const autoTheme = document.getElementById('autoTheme');
+    const lightBtn = document.getElementById('lightBtn');
+    const darkBtn = document.getElementById('darkBtn');
+
+    let chosenSlot = null;
+
+    // theme & variant helpers
+    function applyVariant(v){ document.body.setAttribute('data-variant', v); localStorage.setItem('amrutha_variant', v); }
+    function applyThemeManual(t){ if(!t){ document.body.removeAttribute('data-theme'); localStorage.removeItem('amrutha_theme'); return; } document.body.setAttribute('data-theme', t); localStorage.setItem('amrutha_theme', t); }
+
+    // load saved theme/variant
+    (function(){
+      const savedVar = localStorage.getItem('amrutha_variant') || 'strawberry';
+      variantSelect.value = savedVar; applyVariant(savedVar);
+
+      const savedTheme = localStorage.getItem('amrutha_theme');
+      if(savedTheme){ applyThemeManual(savedTheme); autoTheme.checked = false; }
+      else { autoTheme.checked = true; document.body.removeAttribute('data-theme'); }
+
+      autoTheme.addEventListener('change', ()=>{
+        if(autoTheme.checked){ applyThemeManual(null); }
+        else { applyThemeManual(window.matchMedia('(prefers-color-scheme: dark)').matches? 'dark' : 'light'); }
+      });
+
+      lightBtn.addEventListener('click', ()=>{ autoTheme.checked = false; applyThemeManual('light'); });
+      darkBtn.addEventListener('click', ()=>{ autoTheme.checked = false; applyThemeManual('dark'); });
+
+      variantSelect.addEventListener('change', ()=> applyVariant(variantSelect.value));
+
+      // listen to system preference when autoTheme is on
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)=>{
+        if(autoTheme.checked){ if(e.matches) document.body.setAttribute('data-theme','dark'); else document.body.removeAttribute('data-theme'); }
+      });
+    })();
+
+    // bookings storage
+    function loadBookings(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw? JSON.parse(raw): {}; }catch(e){ console.error(e); return {}; } }
+    function saveBookings(obj){ localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }
+
+    function toDateKey(d){ const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`; }
+    function addMinutes(d,min){ return new Date(d.getTime()+min*60000); }
+    function timeToStr(date){ return date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
+
+    function buildSlotsFor(date, durationMin){ slotsGrid.innerHTML=''; chosenSlot=null; existingBooking.textContent='';
+      const start = new Date(date); start.setHours(OPEN_HOUR,0,0,0);
+      const end = new Date(date); end.setHours(CLOSE_HOUR,0,0,0);
+      const bookings = loadBookings(); const key = toDateKey(date); const dayBookings = bookings[key]||[];
+
+      const items = [];
+      for(let t = new Date(start); t < end; t = addMinutes(t, STEP_MIN)){
+        const s = new Date(t); const e = addMinutes(s, durationMin); if(e > end) break;
+        const overlapped = dayBookings.some(b=>{ const bs=new Date(b.start); const be=new Date(b.end); return !(e <= bs || s >= be); });
+        items.push({start: s, end: e, booked: overlapped, booking: overlapped? dayBookings.find(b=>{ const bs=new Date(b.start); const be=new Date(b.end); return !(e <= bs || s >= be); }): null});
+      }
+
+      if(items.length === 0){ noSlots.style.display = 'block'; noSlots.textContent = 'No slots for this configuration.'; return; }
+      noSlots.style.display = 'none';
+
+      items.forEach(it=>{
+        const node = slotTemplate.content.cloneNode(true).querySelector('.slot');
+        node.querySelector('.time').textContent = `${timeToStr(it.start)} → ${timeToStr(it.end)}`;
+        node.querySelector('.meta').textContent = it.booked? `Booked by ${it.booking.name}` : 'Available';
+        if(it.booked) node.classList.add('booked');
+        node.addEventListener('click', ()=>{ if(it.booked){ showExisting(it.booking); return; } chooseSlot(it); });
+        node.addEventListener('keyup', (e)=>{ if(e.key==='Enter' || e.key===' ') node.click(); });
+        slotsGrid.appendChild(node);
+      });
+    }
+
+    function chooseSlot(it){ chosenSlot = it; chosenInfo.innerHTML = `<div><strong class="pill">${toDateKey(new Date(it.start))}</strong> &nbsp; <span class="pill">${timeToStr(it.start)}–${timeToStr(it.end)}</span></div>`; existingBooking.textContent=''; nameInput.value=''; noteInput.value=''; nameInput.focus(); }
+
+    function showExisting(b){ chosenInfo.innerHTML = `<div><strong class="pill">${toDateKey(new Date(b.start))}</strong> &nbsp; <span class="pill">${timeToStr(new Date(b.start))}–${timeToStr(new Date(b.end))}</span></div>`; existingBooking.innerHTML = `<strong>Already booked by ${escapeHtml(b.name)}</strong><div style="margin-top:6px;color:var(--muted)">${escapeHtml(b.note || '—')}</div>`; }
+
+    function escapeHtml(text){ return String(text).replace(/[&<>\"']/g, ch=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" }[ch])); }
+
+    bookForm.addEventListener('submit', (ev)=>{
+      ev.preventDefault(); if(!chosenSlot) return alert('Please pick a slot first');
+      const name = nameInput.value.trim() || 'Anonymous'; const note = noteInput.value.trim();
+      const bookings = loadBookings(); const key = toDateKey(new Date(chosenSlot.start)); bookings[key] = bookings[key] || [];
+
+      // double-check overlap
+      const overlap = bookings[key].some(b=>{ const bs=new Date(b.start); const be=new Date(b.end); const s=new Date(chosenSlot.start); const e=new Date(chosenSlot.end); return !(e <= bs || s >= be); });
+      if(overlap){ alert('Sorry — that slot was just taken. Please reload slots.'); buildSlotsFor(new Date(dateInput.value), parseInt(durationSelect.value,10)); return; }
+
+      bookings[key].push({ id: Math.random().toString(36).slice(2,9), name, note, start: new Date(chosenSlot.start).toISOString(), end: new Date(chosenSlot.end).toISOString(), created: new Date().toISOString() });
+      saveBookings(bookings);
+
+      // celebration animation: brief teddy bounce and tiny confetti (CSS-free)
+      flashTeddy();
+
+      chosenSlot = null; bookForm.reset(); chosenInfo.textContent = 'No slot selected.';
+      alert(`Booked! ${name} — ${toDateKey(new Date(bookings[key].slice(-1)[0].start))} ${timeToStr(new Date(bookings[key].slice(-1)[0].start))}`);
+      buildSlotsFor(new Date(dateInput.value), parseInt(durationSelect.value,10));
+    });
+
+    cancelBtn.addEventListener('click', ()=>{ chosenSlot = null; chosenInfo.textContent = 'No slot selected.'; existingBooking.textContent = ''; });
+    loadBtn.addEventListener('click', ()=>{ const d = dateInput.value ? new Date(dateInput.value + 'T00:00:00') : null; if(!d || isNaN(d.getTime())){ alert('Pick a valid date.'); return; } buildSlotsFor(d, parseInt(durationSelect.value,10)); });
+    clearAll.addEventListener('click', ()=>{ if(confirm('Clear all bookings from localStorage?')){ localStorage.removeItem(STORAGE_KEY); alert('All bookings cleared.'); slotsGrid.innerHTML=''; noSlots.style.display='block'; } });
+
+    // default today
+    const today = new Date(); dateInput.value = today.toISOString().slice(0,10);
+
+    // flash teddy function (celebration)
+    function flashTeddy(){ const wrap = document.querySelector('.teddy-wrap'); if(!wrap) return; wrap.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}], {duration:550, easing:'ease-out'}); }
+
+    // small helper: show upcoming count in footer
+    (function showUpcoming(){ const bookings = loadBookings(); let count = 0; Object.values(bookings).forEach(arr=> count += arr.length); const footerSmall = document.querySelector('footer .small'); if(footerSmall) footerSmall.textContent = `Made with ☕ + cuddles • ${count} booking(s) saved locally`; })();
+
+  })();
+  </script>
+</body>
+</html>

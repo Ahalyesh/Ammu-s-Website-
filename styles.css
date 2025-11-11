@@ -1,0 +1,92 @@
+:root{
+  --bg:#0f1724;
+  --card:#0b1220;
+  --accent:#FF5C8A;
+  --accent-2:#6EE7B7;
+  --muted:#98A2B3;
+  --glass: rgba(255,255,255,0.03);
+  --radius:14px;
+  --shadow: 0 6px 24px rgba(2,6,23,0.7);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,#071028 0%, #071f30 60%);color: #E6EEF5}
+a{color:inherit}
+
+.hero{
+  padding:40px 24px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:24px;
+  position:relative;
+  overflow:hidden;
+}
+.hero-inner{
+  max-width:1100px;
+  width:100%;
+  text-align:center;
+  backdrop-filter: blur(6px);
+  padding:28px;
+  border-radius:20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255,255,255,0.03);
+}
+h1{font-size:clamp(26px,4vw,44px);margin:0 0 6px;font-weight:700;letter-spacing:-0.02em}
+.subtitle{margin:0;color:var(--muted)}
+.accent{background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+.controls{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center}
+.controls label{display:flex;flex-direction:column;font-size:12px;color:var(--muted)}
+.controls input, .controls select{
+  margin-top:6px;padding:10px 12px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,0.04);color:inherit;
+}
+.btn{padding:10px 14px;border-radius:10px;border:0;background:transparent;color:inherit;cursor:pointer}
+.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#052018;font-weight:600}
+.btn.link{background:transparent;color:var(--muted);font-size:13px}
+
+.sparkles{
+  position:absolute;right:-8%;top:-20%;
+  width:45vmax;height:45vmax;border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, rgba(110,231,183,0.06), transparent 12%), radial-gradient(circle at 70% 70%, rgba(255,92,138,0.06), transparent 12%);
+  transform: rotate(10deg);
+  filter: blur(30px);
+  pointer-events:none;
+}
+
+.main{display:grid;grid-template-columns:1fr 360px;gap:24px;max-width:1100px;margin:28px auto;padding:0 18px}
+@media (max-width:900px){ .main{grid-template-columns:1fr} .book-panel{order:2} }
+
+.slots-section{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:14px;border:1px solid rgba(255,255,255,0.03)}
+#slotsTitle{margin:0 0 12px;font-size:18px}
+.slots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.no-slots{opacity:0.7;padding:18px;color:var(--muted)}
+
+.slot{
+  background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+  border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03);
+  display:flex;flex-direction:column;gap:6px;align-items:flex-start;cursor:pointer;transition:transform .15s, box-shadow .15s;
+}
+.slot:hover{transform:translateY(-6px);box-shadow: 0 8px 26px rgba(2,6,23,0.6)}
+.slot .time{font-weight:700}
+.slot .meta{font-size:12px;color:var(--muted)}
+
+.slot.booked{opacity:0.5;cursor:not-allowed;border-style:dashed}
+.slot.booked .meta{color:#ffb3b3}
+
+.book-panel{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.03);
+  height:fit-content;position:sticky;top:24px;
+}
+.book-panel h3{margin:0 0 8px}
+.chosen-info{font-size:14px;color:var(--muted);margin-bottom:8px}
+.book-panel label{display:block;margin:10px 0;font-size:13px}
+.book-panel input{width:100%;padding:10px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,0.03)}
+.buttons{display:flex;gap:8px;margin-top:10px}
+.existing-booking{margin-top:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);font-size:13px;color:var(--muted)}
+
+.footer{max-width:1100px;margin:18px auto;padding:0 18px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+
+.time-pill{display:inline-block;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.02);font-weight:600}
